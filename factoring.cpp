@@ -31,16 +31,34 @@ void factor(double N);
 
 void print_n(double N);
 
+double gcd(double X, double Y);
+
 int main() {
     double N;
+    double test = 1200;
     while(scanf("%lf", &N) != EOF) {
-      print_n(N);
+      factor(N);
+      printf("%lf\n", gcd(N, test));
     }
     return 0;
 }
 
 void factor(double N) {
   print_n(N);
+}
+
+double gcd(double X, double Y) {
+  if (X < 1 || Y < 1)
+    return 0;
+  if (X == Y)
+    return X;
+  double remainder;
+  while (Y != 0) {
+    remainder = fmod(X, Y);
+    X = Y;
+    Y = remainder;
+  }
+  return X;
 }
 
 void print_n(double N) {
