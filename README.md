@@ -1,5 +1,11 @@
 # Factoring
 
+## TODO
+
+* Calculate primes
+* Check if primes are factor
+* Then use Pollards
+
 ## Build
 
 `make`
