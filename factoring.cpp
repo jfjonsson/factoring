@@ -29,22 +29,23 @@ template <class T> int size(T &x) { return x.size(); }
 
 void factor(double N);
 
-void print_n(double N);
+void print_factor(double N);
 
 double gcd(double X, double Y);
+
+double g(double X, double N);
 
 int main() {
     double N;
     double test = 1200;
     while(scanf("%lf", &N) != EOF) {
       factor(N);
-      printf("%lf\n", gcd(N, test));
     }
     return 0;
 }
 
 void factor(double N) {
-  print_n(N);
+  print_factor(N);
 }
 
 double gcd(double X, double Y) {
@@ -61,6 +62,10 @@ double gcd(double X, double Y) {
   return X;
 }
 
-void print_n(double N) {
+double g(double X, double N) {
+  return fmod(pow(X,2) + 1, N);
+}
+
+void print_factor(double N) {
   printf("%.0lf\n", N);
 }
