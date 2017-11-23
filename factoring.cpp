@@ -35,21 +35,17 @@ int is_prime(mpz_class N, int reps);
 
 void print_factor(double N);
 
-double g(double X, double N);
+mpz_class g(mpz_class X, mpz_class N);
+void do_pollard(mpz_class N);
+mpz_class pollard(mpz_class N);
 
 int main() {
     mpz_class N;
+    mpz_class polli;
     mpz_class GCD;
-    int is_prob_prime = 0;
-
     while(gmp_scanf("%Zd", &N) != EOF) {
-        is_prob_prime = is_prime(N, 50);
-        if(is_prob_prime == 2 || is_prob_prime == 1){
-            cout << N << endl << endl;
-        } else {
-            mpz_gcd(GCD.get_mpz_t(), N.get_mpz_t(), N.get_mpz_t());
-            cout << "fail" << endl << endl;
-        }
+        do_pollard(N);
+        cout << endl;
     }
     return 0;
 }
@@ -65,8 +61,47 @@ int is_prime(mpz_class N, int reps){
 }
 
 
-double g(double X, double N) {
-  return fmod(pow(X,2) + 1, N);
+/// This is the g function. If you dont know the g you ain't no g...g
+/// \param X
+/// \param N
+/// \return
+mpz_class g(mpz_class X, mpz_class N) {
+    mpz_class rop;
+    mpz_pow_ui(rop.get_mpz_t(), X.get_mpz_t(), 2);
+//    rop += rand() % 2321 + 47;
+    rop++;
+    mpz_mod(rop.get_mpz_t(), rop.get_mpz_t(), N.get_mpz_t());
+    return rop;
+}
+
+mpz_class pollard(mpz_class N){
+    mpz_class x = 2, x_fixed = 2, size = 2, factor = 1, mathz;
+    while(factor == 1) {
+        for(size_t c = 1; c <= size && factor <= 1; c++) {
+            x = g(x, N);
+            mathz = x - x_fixed;
+            mpz_gcd(factor.get_mpz_t(), mathz.get_mpz_t(), N.get_mpz_t());
+        }
+        size *= 2;
+        x_fixed = x;
+    }
+    return factor;
+}
+
+void do_pollard(mpz_class N){
+    while(true){
+        mpz_class polli;
+        if(is_prime(N, 50)){
+            cout << N << endl;
+            break;
+        }
+        polli = pollard(N);
+        cout << polli << endl;
+        if(polli == N){
+            break;
+        }
+        N /= polli;
+    }
 }
 
 void print_factor(double N) {
