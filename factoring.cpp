@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <gmp.h>
+#include <gmpxx.h>
 #include <bitset>
 #include <cassert>
 #include <cmath>
@@ -34,6 +35,9 @@ void factor(double N);
 
 int is_prime(mpz_t N, int reps);
 
+mpz_class get_gcd(mpz_t first, mpz_t second);
+
+
 void print_factor(double N);
 
 double gcd(double X, double Y);
@@ -42,7 +46,9 @@ double g(double X, double N);
 
 int main() {
     mpz_t N;
+    mpz_class gcd;
     int is_prob_prime;
+
     while(gmp_scanf("%Zd", &N) != EOF) {
         is_prob_prime = is_prime(N, 25);
         cout << is_prob_prime << endl;
@@ -58,6 +64,16 @@ int main() {
 ///         2 if definitely Prime!
 int is_prime(mpz_t N, int reps){
     return mpz_probab_prime_p(N, reps);
+}
+
+/// Find the GCD for first and second
+/// \param first mpz_t number
+/// \param second mpz_t number
+/// \return GCD for first and second
+mpz_class get_gcd(mpz_t first, mpz_t second){
+    mpz_class _GCD;
+    mpz_gcd(_GCD.get_mpz_t(), first, second);
+    return _GCD;
 }
 
 double g(double X, double N) {
