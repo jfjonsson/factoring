@@ -25,7 +25,6 @@ using namespace std;
 
 #define all(o) (o).begin(), (o).end()
 #define allr(o) (o).rbegin(), (o).rend()
-const int INF = 2147483647;
 typedef long long ll;
 typedef unsigned long long ull;
 template <class T> int size(T &x) { return x.size(); }
@@ -39,10 +38,25 @@ void print_factor(double N);
 double g(double X, double N);
 
 int main() {
-    mpz_t N;
+    mpz_t N, prime, root, remainder;
+    mpz_init(prime);
+    mpz_init(root);
+    mpz_init(remainder);
     int is_prob_prime;
 
     while(gmp_scanf("%Zd", &N) != EOF) {
+        mpz_set_si(prime, 2);
+        mpz_root(root, N, 2);
+        cout << "Number: " << N << endl;
+        cout << "Root: " << root << endl;
+        while(mpz_cmp(prime, root) < 1) {
+            // cout << "Prime number: " << prime << endl;
+            mpz_mod(remainder, prime, N);
+            if (mpz_cmp_si(remainder, 0) == 0) {
+                cout << prime << endl;
+            }
+            mpz_nextprime(prime, prime);
+        }
         is_prob_prime = is_prime(N, 50);
         if(is_prob_prime == 2 || is_prob_prime == 1){
             cout << N << endl << endl;
