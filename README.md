@@ -12,4 +12,5 @@
 
 ## Run
 
-`./Factoring < input/factoring.in`
+`./Factoring < input/factoring.in`   // Mac/Linux
+`Factoring.exe < input/factoring.in` // Windows
