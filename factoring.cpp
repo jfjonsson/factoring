@@ -45,7 +45,7 @@ int main() {
     int is_prob_prime;
     bool prime_rest;
     vector<string> primes;
-    while(mpz_cmp_si(prime.get_mpz_t(), 60000) < 1) {
+    while(mpz_cmp_si(prime.get_mpz_t(), 100) < 1) {
         mpz_nextprime(prime.get_mpz_t(), prime.get_mpz_t());
         primes.push_back(prime.get_str());
     }
@@ -124,7 +124,7 @@ mpz_class pollard(mpz_class N){
             x = g(x, N);
             mathz = x - x_fixed;
             mpz_gcd(factor.get_mpz_t(), mathz.get_mpz_t(), N.get_mpz_t());
-            if(++counter >= 300000){
+            if(++counter >= 590000){
                 return -1;
             }
         }
@@ -137,7 +137,7 @@ mpz_class pollard(mpz_class N){
 bool do_pollard(mpz_class N, vector<string> &factors){
     mpz_class factor;
     while(true){
-        if(is_prime(N, 50)){
+        if(is_prime(N, 15)){
             factors.push_back(N.get_str());
             break;
         }
@@ -149,8 +149,4 @@ bool do_pollard(mpz_class N, vector<string> &factors){
         N /= factor;
     }
     return true;
-}
-
-void print_factor(double N) {
-  printf("%.0lf\n", N);
 }
