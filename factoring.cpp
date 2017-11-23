@@ -23,7 +23,6 @@
 
 using namespace std;
 
-
 #define all(o) (o).begin(), (o).end()
 #define allr(o) (o).rbegin(), (o).rend()
 const int INF = 2147483647;
@@ -37,8 +36,6 @@ int is_prime(mpz_t N, int reps);
 
 void print_factor(double N);
 
-double gcd(double X, double Y);
-
 double g(double X, double N);
 
 int main() {
@@ -46,11 +43,11 @@ int main() {
     int is_prob_prime;
 
     while(gmp_scanf("%Zd", &N) != EOF) {
-        is_prob_prime = is_prime(N, 25);
-        if(is_prob_prime == 2){
-            cout << N << endl;
+        is_prob_prime = is_prime(N, 50);
+        if(is_prob_prime == 2 || is_prob_prime == 1){
+            cout << N << endl << endl;
         } else {
-            cout << "fail" << endl;
+            cout << "fail" << endl << endl;
         }
     }
     return 0;
