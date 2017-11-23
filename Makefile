@@ -1,2 +1,4 @@
 all:
-	-g++ -Wextra -O2 -std=gnu++11  *.cpp -o FACTORING
+#	-g++ -Wextra -O2 -std=gnu++11  *.cpp -o FACTORING
+	g++ factoring.cpp -lgmpxx -lgmp -I/usr/local/include/ -L/usr/local/lib/ -o FACTORING
+

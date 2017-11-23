@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <gmp.h>
 #include <bitset>
 #include <cassert>
 #include <cmath>
@@ -18,7 +19,9 @@
 #include <string>
 #include <utility>
 #include <vector>
+
 using namespace std;
+
 
 #define all(o) (o).begin(), (o).end()
 #define allr(o) (o).rbegin(), (o).rend()
@@ -29,6 +32,8 @@ template <class T> int size(T &x) { return x.size(); }
 
 void factor(double N);
 
+int is_prime(mpz_t N, int reps);
+
 void print_factor(double N);
 
 double gcd(double X, double Y);
@@ -36,30 +41,23 @@ double gcd(double X, double Y);
 double g(double X, double N);
 
 int main() {
-    double N;
-    double test = 1200;
-    while(scanf("%lf", &N) != EOF) {
-      factor(N);
+    mpz_t N;
+    int is_prob_prime;
+    while(gmp_scanf("%Zd", &N) != EOF) {
+        is_prob_prime = is_prime(N, 25);
+        cout << is_prob_prime << endl;
     }
     return 0;
 }
 
-void factor(double N) {
-  print_factor(N);
-}
-
-double gcd(double X, double Y) {
-  if (X < 1 || Y < 1)
-    return 0;
-  if (X == Y)
-    return X;
-  double remainder;
-  while (Y != 0) {
-    remainder = fmod(X, Y);
-    X = Y;
-    Y = remainder;
-  }
-  return X;
+/// Estimates if N is prime. It is not guaranteed t be correct. Higher reps mean higher likelihood of being correct.
+/// \param N Number to check
+/// \param reps Number of times the algorithm chekcs if N is prime
+/// \return 0 if not Prime!
+///         1 if maybe Prime!
+///         2 if definitely Prime!
+int is_prime(mpz_t N, int reps){
+    return mpz_probab_prime_p(N, reps);
 }
 
 double g(double X, double N) {
