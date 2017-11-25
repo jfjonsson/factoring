@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <time.h>
 #include <gmp.h>
 #include <gmpxx.h>
 #include <bitset>
@@ -15,6 +16,7 @@
 #include <map>
 #include <queue>
 #include <set>
+#include <unordered_set>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -34,12 +36,12 @@ void factor(double N);
 int is_prime(mpz_class &N, int reps);
 
 //mpz_class g(mpz_class &X, mpz_class &N);
-bool do_pollard(mpz_class &N, vector<string> &factors);
+bool do_pollard(mpz_class &N, vector<string> &factors, vector<string> &primes);
 mpz_class pollard(mpz_class &N);
 
 int main() {
     mpz_class polli;
-    mpz_class N, prime, root, remainder;
+    mpz_class N, prime, remainder;
     int is_prob_prime;
     bool prime_rest;
     vector<string> primes;
@@ -47,16 +49,14 @@ int main() {
         mpz_nextprime(prime.get_mpz_t(), prime.get_mpz_t());
         primes.push_back(prime.get_str());
     }
+    vector<string> factors;
     while(gmp_scanf("%Zd", &N) != EOF) {
-        vector<string> factors;
         prime_rest = false;
         is_prob_prime = is_prime(N, 15);
         if(is_prob_prime){
             cout << N << endl << endl;
             continue;
         }
-        mpz_set_si(prime.get_mpz_t(), 2);
-        mpz_root(root.get_mpz_t(), N.get_mpz_t(), 2);
         for (unsigned int i=0; i < primes.size(); i++) {
             mpz_set_str(prime.get_mpz_t(), primes[i].c_str(), 10);
             mpz_mod(remainder.get_mpz_t(), N.get_mpz_t(), prime.get_mpz_t());
@@ -75,9 +75,8 @@ int main() {
             if (prime_rest) {
                 break;
             }
-            mpz_nextprime(prime.get_mpz_t(), prime.get_mpz_t());
         }
-        if(do_pollard(N, factors)){
+        if(do_pollard(N, factors, primes)){
             for (auto i = factors.begin(); i != factors.end(); ++i) {
                 cout << *i << endl;
             }
@@ -134,32 +133,46 @@ int is_prime(mpz_class &N, int reps){
 //    return factor;
 //}
 
-bool do_pollard(mpz_class &N, vector<string> &factors){
+//unordered_set<string> pollard_primes;
+bool do_pollard(mpz_class &N, vector<string> &factors, vector<string> &primes){
     int counter;
-    mpz_class x, size, factor, mathz, y;
+    mpz_class x, factor, mathz, y;
     while(true){
         if(mpz_probab_prime_p(N.get_mpz_t(), 15)){
             factors.push_back(N.get_str());
+            /*
+            if (pollard_primes.count(N.get_str()) == 0) {
+                pollard_primes.insert(N.get_str());
+                primes.push_back(N.get_str());
+            }
+            */
             break;
         }
         counter = 0;
-        x = 2, size = 2, factor = 1, y = 2;
-        for(;factor == 1; size*=2) {
-            for(size_t c = 1; c <= size && factor <= 1; ++c) {
-                x = ((x*x)+1) % N;
-                y = ((y*y)+1) % N;
-                y = ((y*y)+1) % N;
-                mathz = (x - y) % N;
-                mpz_gcd(factor.get_mpz_t(), mathz.get_mpz_t(), N.get_mpz_t());
-                if(++counter >= 700000){
-                    return false;
-                }
+        x = 199, factor = 1, y = 199;
+        while (factor <= 1) {
+            x = ((x*x)+1) % N;
+            x = ((x*x)+1) % N;
+            y = ((y*y)+1) % N;
+            y = ((y*y)+1) % N;
+            y = ((y*y)+1) % N;
+            y = ((y*y)+1) % N;
+            mathz = (x - y) % N;
+            mpz_gcd(factor.get_mpz_t(), mathz.get_mpz_t(), N.get_mpz_t());
+            if(++counter >= 500000){
+                return false;
             }
         }
         if(factor == -1){
             return false;
         }
         factors.push_back(factor.get_str());
+        /*
+        if (pollard_primes.count(factor.get_str()) == 0) {
+            pollard_primes.insert(factor.get_str());
+            primes.push_back(factor.get_str());
+        }
+        */
         mpz_divexact(N.get_mpz_t(), N.get_mpz_t(), factor.get_mpz_t());
     }
     return true;
