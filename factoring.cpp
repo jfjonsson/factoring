@@ -134,7 +134,8 @@ int is_prime(mpz_class &N, int reps){
 //}
 
 bool do_pollard(mpz_class &N, vector<string> &factors){
-    int counter, bent_counter = 0, start = 547, bent_max = 100;
+    srand(time(NULL));
+    long counter, bent_counter = 0, start = 12459026053, bent_max = 50;
     mpz_class x, factor, mathz, y, bent_product = 1;
     while(true){
         if(mpz_probab_prime_p(N.get_mpz_t(), 15)){
@@ -146,6 +147,7 @@ bool do_pollard(mpz_class &N, vector<string> &factors){
         while (factor == 1) {
             x = ((x*x)+1) % N;
             x = ((x*x)+1) % N;
+            y = ((y*y)+1) % N;
             y = ((y*y)+1) % N;
             y = ((y*y)+1) % N;
             y = ((y*y)+1) % N;
