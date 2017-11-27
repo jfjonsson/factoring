@@ -36,7 +36,7 @@ void factor(double N);
 int is_prime(mpz_class &N, int reps);
 
 //mpz_class g(mpz_class &X, mpz_class &N);
-bool do_pollard(mpz_class &N, vector<string> &factors, vector<string> &primes);
+bool do_pollard(mpz_class &N, vector<string> &factors);
 mpz_class pollard(mpz_class &N);
 
 int main() {
@@ -45,7 +45,7 @@ int main() {
     int is_prob_prime;
     bool prime_rest;
     vector<string> primes;
-    while(mpz_cmp_si(prime.get_mpz_t(), 100) < 1) {
+    while(mpz_cmp_si(prime.get_mpz_t(), 700000) < 1) {
         mpz_nextprime(prime.get_mpz_t(), prime.get_mpz_t());
         primes.push_back(prime.get_str());
     }
@@ -76,7 +76,7 @@ int main() {
                 break;
             }
         }
-        if(do_pollard(N, factors, primes)){
+        if(do_pollard(N, factors)){
             for (auto i = factors.begin(); i != factors.end(); ++i) {
                 cout << *i << endl;
             }
@@ -133,47 +133,48 @@ int is_prime(mpz_class &N, int reps){
 //    return factor;
 //}
 
-//unordered_set<string> pollard_primes;
-bool do_pollard(mpz_class &N, vector<string> &factors, vector<string> &primes){
-    int counter;
-    mpz_class x, factor, mathz, y;
+bool do_pollard(mpz_class &N, vector<string> &factors){
+    int counter, bent_counter = 0, start = 547, bent_max = 100;
+    mpz_class x, factor, mathz, y, bent_product = 1;
     while(true){
         if(mpz_probab_prime_p(N.get_mpz_t(), 15)){
             factors.push_back(N.get_str());
-            /*
-            if (pollard_primes.count(N.get_str()) == 0) {
-                pollard_primes.insert(N.get_str());
-                primes.push_back(N.get_str());
-            }
-            */
             break;
         }
         counter = 0;
-        x = 199, factor = 1, y = 199;
-        while (factor <= 1) {
+        x = start, factor = 1, y = start;
+        while (factor == 1) {
             x = ((x*x)+1) % N;
             x = ((x*x)+1) % N;
             y = ((y*y)+1) % N;
             y = ((y*y)+1) % N;
             y = ((y*y)+1) % N;
             y = ((y*y)+1) % N;
-            mathz = (x - y) % N;
-            mpz_gcd(factor.get_mpz_t(), mathz.get_mpz_t(), N.get_mpz_t());
+            bent_product *= (x > y ? x - y : y - x);
+            if (bent_counter++ == bent_max) {
+                mpz_gcd(factor.get_mpz_t(), bent_product.get_mpz_t(), N.get_mpz_t());
+                bent_counter = 0;
+                bent_product = 1;
+            }
             if(++counter >= 500000){
                 return false;
             }
+            if (N == factor) {
+                factor = 1;
+                ++start;
+                x = start;
+                y = start;
+            }
         }
-        if(factor == -1){
-            return false;
-        }
-        factors.push_back(factor.get_str());
-        /*
-        if (pollard_primes.count(factor.get_str()) == 0) {
-            pollard_primes.insert(factor.get_str());
-            primes.push_back(factor.get_str());
-        }
-        */
         mpz_divexact(N.get_mpz_t(), N.get_mpz_t(), factor.get_mpz_t());
+        if (mpz_probab_prime_p(factor.get_mpz_t(), 15)) {
+            factors.push_back(factor.get_str()); 
+        } else {
+            bool res = do_pollard(factor, factors);
+            if (!res) {
+                return false;
+            }
+        }
     }
     return true;
 }
