@@ -17,12 +17,12 @@ using namespace std;
 bool do_pollard(mpz_class &N, vector<string> &factors);
 
 int main() {
-    mpz_class polli;
     mpz_class N, prime, remainder;
     int is_prob_prime;
     bool prime_rest;
     vector<string> primes;
-    while(mpz_cmp_si(prime.get_mpz_t(), 700000) < 1) {
+    primes.reserve(3000);
+    while(mpz_cmp_si(prime.get_mpz_t(), 3000) < 1) {
         mpz_nextprime(prime.get_mpz_t(), prime.get_mpz_t());
         primes.push_back(prime.get_str());
     }
@@ -68,17 +68,15 @@ int main() {
 
 
 bool do_pollard(mpz_class &N, vector<string> &factors){
-    srand(time(NULL));
-    long counter, bent_counter = 0, start = 12459026053, bent_max = 40;
-    mpz_class x, factor, mathz, y, bent_product = 1;
-    while(true){
-        if(mpz_probab_prime_p(N.get_mpz_t(), 15)){
-            factors.push_back(N.get_str());
-            break;
-        }
+    int bent_max=35, counter=0;
+    long start=12459026053;
+    mpz_class x, y, factor, bent_product = 1;
+    while(!mpz_probab_prime_p(N.get_mpz_t(), 15)){
         counter = 0;
-        x = start, factor = 1, y = start;
+        x = y = start;
+        factor = 1;
         while (factor == 1) {
+            if(++counter >= 555000){ return false; }
             x = ((x*x)+1) % N;
             x = ((x*x)+1) % N;
             y = ((y*y)+1) % N;
@@ -89,28 +87,22 @@ bool do_pollard(mpz_class &N, vector<string> &factors){
             bent_product *= (x > y ? x - y : y - x);
             if (counter % bent_max == 0) {
                 mpz_gcd(factor.get_mpz_t(), bent_product.get_mpz_t(), N.get_mpz_t());
-                bent_counter = 0;
                 bent_product = 1;
-            }
-            if(++counter >= 555000){
-                return false;
             }
             if (N == factor) {
                 factor = 1;
-                ++start;
-                x = start;
-                y = start;
+                x = y = ++start;
             }
         }
         mpz_divexact(N.get_mpz_t(), N.get_mpz_t(), factor.get_mpz_t());
         if (mpz_probab_prime_p(factor.get_mpz_t(), 15)) {
             factors.push_back(factor.get_str());
         } else {
-            bool res = do_pollard(factor, factors);
-            if (!res) {
+            if (!do_pollard(factor, factors)) {
                 return false;
             }
         }
     }
+    factors.push_back(N.get_str());
     return true;
 }
