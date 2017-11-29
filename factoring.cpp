@@ -15,7 +15,7 @@ bool do_pollard(mpz_class &N, vector<string> &factors, long start){
         x = y = start;
         factor = 1;
         while (factor == 1) {
-            if(++counter >= 650000){ return false; }
+            if(++counter >= 750000){ return false; }
             x = (x * x + 1) % N;
             x = (x * x + 1) % N;
             y = (y * y + 1) % N;
@@ -80,7 +80,7 @@ int main() {
                 break;
             }
         }
-        // Run Pollard's rho algorithm to find larger factors
+        // Run Rollard's rho algorithm to find larger factors
         if(do_pollard(N, factors, start)){
             for (auto i = factors.begin(); i != factors.end(); ++i) {
                 cout << *i << endl;
@@ -92,3 +92,4 @@ int main() {
         cout << endl;
     }
 }
+
