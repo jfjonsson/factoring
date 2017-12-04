@@ -7,13 +7,14 @@
 using namespace std;
 
 // Pollard's rho algorithm implementation
-bool do_pollard(mpz_class &N, vector<string> &factors, long start){
+bool do_pollard(mpz_class &N, vector<string> &factors, size_t start){
     int brent_max=35, counter=0;
     mpz_class x, y, factor, brent_product = 1;
     while(!mpz_probab_prime_p(N.get_mpz_t(), 15)){
         counter = 0;
         x = y = start;
         factor = 1;
+//        while (factor == 1) {
         while (factor == 1) {
             if(++counter >= 750000){ return false; }
             x = (x * x + 1) % N;
@@ -63,16 +64,15 @@ int main() {
             cout << N << endl << endl;
             continue;
         }
-        // Check if the first 3000 primes are factors in N
+        // Check if the primes below 3000 are factors in N
         for (i=0; i < primes.size(); ++i) {
             mpz_set_str(prime.get_mpz_t(), primes[i].c_str(), 10);
             if(N % prime == 0){
                 if(!mpz_probab_prime_p(N.get_mpz_t(), 15)){
                     // if we find a factor check if it is a repeated factor in N
-                    while(N % prime == 0){
-                        factors.push_back(prime.get_str());
-                        N /= prime;
-                    }
+                    factors.push_back(prime.get_str());
+                    N /= prime;
+                    --i;
                 }
             }
             // If the remainder is prime we break and print out the factors
@@ -80,7 +80,7 @@ int main() {
                 break;
             }
         }
-        // Run Rollard's rho algorithm to find larger factors
+        // Run Pollard's rho algorithm to find larger factors
         if(do_pollard(N, factors, start)){
             for (auto i = factors.begin(); i != factors.end(); ++i) {
                 cout << *i << endl;
@@ -92,4 +92,3 @@ int main() {
         cout << endl;
     }
 }
-
